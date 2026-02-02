@@ -6,7 +6,8 @@ import dotenv from "dotenv";
 dotenv.config();
 const app = express();
 const Port = process.env.PORT || 3001;
-
+//middle wares
+app.use(express.json());
 app.use("/api/notes", notesRouter);
 connectDB();
 

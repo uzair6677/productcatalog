@@ -1,15 +1,28 @@
-export function getAllNotes(req, res) {
-  res.status(200).send("you got 10 rating");
+import Notes from "../models/Notes.js";
+export async function getAllNotes(req, res) {
+  try {
+    const notes = await Notes.find();
+    res.status(200).json(notes);
+  } catch {
+    res.status(500).json({ message: "failed to fetch notes" });
+  }
 }
 
-export function CreateNote(req, res) {
-  res.status(201).json({ message: "notes created succeessfully" });
+export async function CreateNote(req, res) {
+  try {
+    const { title, content } = req.body;
+    console.log(title, content);
+    const newNote = new Notes({ title: title, content: content });
+    await newNote.save();
+    res.status(201).json({ message: "note created succeefully" });
+  } catch (error) {}
+  res.status(500).json({ message: "notes not  created succeessfully" });
 }
 
-export function UpdateNote(req, res) {
+export async function UpdateNote(req, res) {
   res.status(200).json({ message: "notes updated succeessfully" });
 }
 
-export function DeleteNote(req, res) {
+export async function DeleteNote(req, res) {
   res.status(200).json({ message: "notes deleted succeessfully" });
 }
