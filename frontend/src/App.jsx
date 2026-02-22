@@ -8,9 +8,9 @@ import NoteDetailPage from "./pages/NoteDetailPage";
 const App = () => {
   return (
     <div>
-      <div>
+      {/* <div>
         <button className="btn btn-primary">click me</button>
-      </div>
+      </div> */}
       {/* <button
         onClick={() => toast.error("congrats ")}
         className="text-white bg-blue-500 hover:bg-blue-700 font-bold py-2 px-4 rounded"
