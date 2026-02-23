@@ -1,7 +1,6 @@
 import { ArrowLeftIcon } from "lucide-react";
 import React, { useState } from "react";
-import { Link, useNavigate } from "react-router";
-import Axios from "axios";
+import { Link, useNavigate } from "react-router-dom";
 import toast from "react-hot-toast";
 import api from "../libs/axios";
 
@@ -10,82 +9,101 @@ const Create = () => {
   const [Content, setContent] = useState("");
   const [Loading, setLoading] = useState(false);
   const navigate = useNavigate();
+
   const handleSubmit = async (e) => {
     e.preventDefault();
+
     if (!Title.trim() || !Content.trim()) {
-      alert("please fill all required fields");
+      toast.error("Please fill all required fields");
       return;
     }
-    setLoading(true);
+
     try {
+      setLoading(true);
       await api.post("/notes", {
         title: Title,
         content: Content,
       });
-      toast.success("Notes Created succeessfully");
+
+      toast.success("Note created successfully");
       navigate("/");
     } catch (error) {
       console.error("create notes failed", error);
-      if (error.response.status == 429) {
+
+      if (error?.response?.status === 429) {
         toast.error(
-          "you are creating notes too fast, please wait and try again",
+          "You are creating notes too fast, please wait and try again",
           { duration: 4000, icon: "⏳" },
         );
         return;
       }
 
-      toast.error("Failed to create Noteas");
+      toast.error("Failed to create notes");
     } finally {
       setLoading(false);
     }
   };
+
   return (
-    <div className="min-h-screen bg-base-200 ">
+    <div className="min-h-screen bg-base-200">
       <div className="container mx-auto px-4 py-8">
-        <div className="max-w-2xl mx-auto">
-          <Link to={"/"} className="btn btn-ghost mb-6">
-            <ArrowLeftIcon className="size-5"></ArrowLeftIcon>
-            BacktoNotes
-          </Link>
-          <div className="card bg-base-100">
-            <div className="card-body">
-              <h2 className="card-title text-2xl mb-4">Create New Notes</h2>
-              <form onSubmit={handleSubmit}>
-                <div className="form-control mb-4">
+        <div className="max-w-2xl mx-auto space-y-4">
+          {/* Top bar (same as detail page) */}
+          <div className="flex items-center justify-between">
+            <Link to="/" className="btn btn-ghost">
+              <ArrowLeftIcon className="size-5" />
+              Back to Notes
+            </Link>
+          </div>
+
+          <form onSubmit={handleSubmit} className="space-y-4">
+            {/* Title card */}
+            <div className="card bg-base-100">
+              <div className="card-body">
+                <div className="form-control">
                   <label className="label">
-                    <span className="label-text ">Title</span>
+                    <span className="label-text">Title</span>
                   </label>
                   <input
                     type="text"
                     placeholder="Note Title"
-                    className="input input-bordered "
+                    className="input input-bordered w-full"
                     value={Title}
                     onChange={(e) => setTitle(e.target.value)}
-                  ></input>
-                  <div className="form-control mb-4">
-                    <label className="label">
-                      <span className="label-text">Content</span>
-                    </label>
-                    <textarea
-                      placeholder="write your note here..."
-                      className="textarea textarea-bordered h-32"
-                      value={Content}
-                      onChange={(e) => setContent(e.target.value)}
-                    />
-                  </div>
-                  <div className="card-actions justify-end">
-                    <button
-                      type="submit"
-                      className="btn btn-primary "
-                      disabled={Loading}
-                    >
-                      {Loading ? "Creating..." : "Create-Note"}
-                    </button>
-                  </div>
+                  />
                 </div>
-              </form>
+              </div>
             </div>
-          </div>
+
+            {/* Content card */}
+            <div className="card bg-base-100">
+              <div className="card-body">
+                <div className="form-control">
+                  <label className="label">
+                    <span className="label-text">Content</span>
+                  </label>
+                  <textarea
+                    placeholder="Write your note here..."
+                    className="textarea textarea-bordered w-full resize-none"
+                    rows={6}
+                    value={Content}
+                    onChange={(e) => setContent(e.target.value)}
+                  />
+                </div>
+              </div>
+            </div>
+
+            {/* Save button (same position as detail page) */}
+            <div className="flex justify-end">
+              <button
+                type="submit"
+                className="btn btn-primary"
+                disabled={Loading}
+              >
+                {Loading ? "Creating..." : "Create Note"}
+              </button>
+            </div>
+          </form>
         </div>
       </div>
     </div>
