@@ -5,6 +5,7 @@ import dotenv from "dotenv";
 import notesRouter from "./routes/notesRoutes.js";
 import { connectDB } from "./config/db.js";
 import path from "path";
+// In your src/server.js, add debug logging:
 
 dotenv.config();
 const app = express();
@@ -12,13 +13,17 @@ const Port = process.env.PORT || 3001;
 const __dirname = path.resolve();
 //middle wares
 app.use(express.json());
-if (process.env.NODE_ENV === "development") {
-  app.use(cors({ origin: process.env.FRONTEND_URL }));
+// app.use(
+//   cors({
+//     origin: "http://localhost:5173",
+//   }),
+// );
+if (process.env.NODE_ENV !== "development") {
+  app.use(cors({ origin: process.env.FRONTEND_URL, credentials: true }));
 } // this midlelayer is used to parse the incoming request body as JSON, making it easier to work with the data sent by clients in POST and PUT requests. It allows us to access the data in req.body as a JavaScript object.
 app.use(rateLimiter);
 
 app.use((req, res, next) => {
-  console.log("we just log into new request");
   next();
 });
 app.use("/api/notes", notesRouter);
